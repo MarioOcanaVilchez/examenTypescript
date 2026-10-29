@@ -11,10 +11,16 @@ let pokemon2:Pokemon | null = await buscaPokemonConIntentos('1');
 let pokemon3:Pokemon | null = await buscaPokemonConTiempo('2');
 console.log(pokemon != null ? pokemon : '');
 console.log(pokemon2 != null ? pokemon2 : '');
-function pintaPokemon(pokemon:PokemonTipo){
-    return `<div class="pokemonSinCargar">
-    <h2>${pokemon.pokemon.name}</h2>
-    <div>`;
+function idDesdeUrl(url: string): number {
+  const match = url.match(/\/(\d+)\/?$/);
+  return match ? Number.parseInt(match[1], 10) : 0;
+}
+
+function pintaPokemon(pokemon: PokemonTipo) {
+  const id = idDesdeUrl(pokemon.pokemon.url);
+  return `<div class="pokemonSinCargar">
+    <h2 class="${claseColor(id)} ${claseRotacion(id)}">${pokemon.pokemon.name}</h2>
+  </div>`;
 }
 
 function pintaPokemons(pokemons:PokemonTipo[]){
@@ -27,37 +33,47 @@ function pintaPokemonsPeso(pokemons:Pokemon[]){
     document.querySelector<HTMLDivElement>('#data')!.innerHTML = resultado;
 }
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<p${pokemon != null ? '' : ' class="ErrorCargando"'}>${pokemon != null ? `${pokemon.name}` : 'No se ha podido cargar'}</p>
-<p${pokemon2 != null ? '' : ' class="ErrorCargando"'}>${pokemon2 != null ? `${pokemon2.name}` : 'No se ha podido cargar'}</p>
-<p${pokemon3 != null ? '' : ' class="ErrorCargando"'}>${pokemon3 != null ? `${pokemon3.name}` : 'No se ha podido cargar'}</p>
-<h1>Pokemons</h1>
-<select id="selector1">
-      <option value="1" selected>Normal</option>
-      <option value="2">fighting</option>
-      <option value="3">flying</option>
-      <option value="4">poison</option>
-      <option value="5">ground</option>
-      <option value="6">rock</option>
-      <option value="7">bug</option>
-      <option value="8">ghost</option>
-    </select>
-<select id="selector2">
-      <option value="1">Normal</option>
-      <option value="2" selected>fighting</option>
-      <option value="3">flying</option>
-      <option value="4">poison</option>
-      <option value="5">ground</option>
-      <option value="6">rock</option>
-      <option value="7">bug</option>
-      <option value="8">ghost</option>
-    </select>
-<button id="BuscarTipo">Buscar por tipo</button>
-<button id="BuscaDosTipo">Buscar 2 tipos a la vez</button>
-    <div id="data">
-    </div>
-    <input type="text" id="pokemonBuscar" placeholder="Pokemon a buscar">
-    <button id="BuscarPokemon">Buscar pokemon</button>
-    <button id="compararPokemonsPeso">Comparar dos pokemons por peso</button>
+<header class="app-header">
+  <h1>Pokemons</h1>
+  <div class="status-list">
+    <p${pokemon != null ? '' : ' class="ErrorCargando"'}>${pokemon != null ? pokemon.name : 'No se ha podido cargar'}</p>
+    <p${pokemon2 != null ? '' : ' class="ErrorCargando"'}>${pokemon2 != null ? pokemon2.name : 'No se ha podido cargar'}</p>
+    <p${pokemon3 != null ? '' : ' class="ErrorCargando"'}>${pokemon3 != null ? pokemon3.name : 'No se ha podido cargar'}</p>
+  </div>
+</header>
+
+<section class="controls-wrapper" aria-label="Buscar por tipo">
+  <select id="selector1" class="field">
+    <option value="1" selected>Normal</option>
+    <option value="2">fighting</option>
+    <option value="3">flying</option>
+    <option value="4">poison</option>
+    <option value="5">ground</option>
+    <option value="6">rock</option>
+    <option value="7">bug</option>
+    <option value="8">ghost</option>
+  </select>
+  <select id="selector2" class="field">
+    <option value="1">Normal</option>
+    <option value="2" selected>fighting</option>
+    <option value="3">flying</option>
+    <option value="4">poison</option>
+    <option value="5">ground</option>
+    <option value="6">rock</option>
+    <option value="7">bug</option>
+    <option value="8">ghost</option>
+  </select>
+  <button id="BuscarTipo" class="btn btn-primary">Buscar por tipo</button>
+  <button id="BuscaDosTipo" class="btn">Buscar 2 tipos a la vez</button>
+</section>
+
+<section class="controls-wrapper" aria-label="Buscar pokemon">
+  <input type="text" id="pokemonBuscar" class="field" placeholder="Pokemon a buscar">
+  <button id="BuscarPokemon" class="btn btn-primary">Buscar pokemon</button>
+  <button id="compararPokemonsPeso" class="btn">Comparar dos pokemons por peso</button>
+</section>
+
+<div id="data"></div>
 `;
 
 document.querySelector<HTMLButtonElement>('#BuscarTipo')?.addEventListener('click', () => buscarPokemonPorTipo());
@@ -80,6 +96,18 @@ document.querySelector<HTMLButtonElement>('#BuscaDosTipo')?.addEventListener('cl
 async function buscarPokemonPor2Tipo(){
     pokemonsSinCargar =  await buscarPokemonTipos([document.querySelector<HTMLSelectElement>('#selector1')!.value,document.querySelector<HTMLSelectElement>('#selector2')!.value]);
     pintaPokemons(pokemonsSinCargar);
+}
+
+const NUM_COLORES = 6;
+const NUM_ROTACIONES = 6;
+
+
+function claseRotacion(id: number): string {
+  return `poke-rotate-${((id * 7 + 3) % NUM_ROTACIONES) + 1}`;
+}
+
+function claseColor(id: number): string {
+  return `poke-color-${(id % NUM_COLORES) + 1}`;
 }
 
 
