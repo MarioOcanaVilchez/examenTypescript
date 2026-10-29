@@ -1,4 +1,4 @@
-import { getPokemon, getPokemonIntentos, getPokemons, getPokemonTiempo } from "./servicePokemon";
+import { getPokemonIntentos, getPokemons, getPokemonTiempo } from "./servicePokemon";
 import { getPokemonTipo, getPokemonTipos } from "./serviceTipo";
 import type { Pokemon } from "./typesPokemon";
 import type { PokemonTipo } from "./typeTipo";
